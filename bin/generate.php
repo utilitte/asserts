@@ -228,26 +228,6 @@ class TypeAssertionGenerator
 
 }
 
-$types = [
-	'array',
-	'array|null',
-	'object',
-	'object|null',
-	'string',
-	'string|null',
-	'int',
-	'int|null',
-	'float',
-	'float|null',
-	'int|float',
-	'int|float|null',
-	'numeric',
-	'numericInt',
-	'numericInt|null',
-	'numericFloat',
-	'numericFloat|null',
-];
-
 $data = (new Processor())->process(Expect::structure([
 	'types' => Expect::arrayOf(Expect::structure([
 		'assertions' => Expect::anyOf(Expect::string(), Expect::arrayOf('string'))->castTo('array')->default([]),
@@ -255,6 +235,7 @@ $data = (new Processor())->process(Expect::structure([
 		'prolog' => Expect::string()->default(null),
 		'epilog' => Expect::string()->default(null),
 	])),
+	'generate' => Expect::arrayOf(Expect::string()),
 ]), Neon::decode(FileSystem::read(__DIR__ . '/methods.neon')));
 
 $generator = new TypeAssertionGenerator(
@@ -265,5 +246,5 @@ $generator = new TypeAssertionGenerator(
 	$data->types,
 );
 
-FileSystem::write(__DIR__ . '/../src/Mixins/TypeAssertTrait.php', $generator->run($types));
-FileSystem::write(__DIR__ . '/../src/Mixins/ArrayTypeAssertTrait.php', $generator->runArray($types));
+FileSystem::write(__DIR__ . '/../src/Mixins/TypeAssertTrait.php', $generator->run($data->generate));
+FileSystem::write(__DIR__ . '/../src/Mixins/ArrayTypeAssertTrait.php', $generator->runArray($data->generate));

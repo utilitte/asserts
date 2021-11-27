@@ -9,6 +9,9 @@ types:
 		assertions: '!is_object($value)'
 	string:
 		assertions: '!is_string($value)'
+	scalar:
+		returns: [int, float, string, bool]
+		assertions: '!is_scalar($value)'
 	null:
 		assertions: '$value !== null'
 
@@ -36,3 +39,25 @@ types:
 			$value = (int) preg_replace('#\\.0*$#D', '', $value);
 		}
 		"""
+
+generate:
+	- array
+	- array|null
+	- object
+	- object|null
+	- string
+	- string|null
+	- int
+	- int|null
+	- float
+	- float|null
+	- int|float
+	- int|float|null
+	- scalar
+	- scalar|null
+	## special
+	- numeric
+	- numericInt
+	- numericInt|null
+	- numericFloat
+	- numericFloat|null
