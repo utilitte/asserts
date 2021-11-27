@@ -136,6 +136,24 @@ trait TypeAssertTrait
 		return $value;
 	}
 
+	public static function callable(mixed $value): callable
+	{
+		if (!is_callable($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'callable'));
+		}
+
+		return $value;
+	}
+
+	public static function callableOrNull(mixed $value): ?callable
+	{
+		if (!is_callable($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'callable|null'));
+		}
+
+		return $value;
+	}
+
 	public static function scalar(mixed $value): int|float|string|bool
 	{
 		if (!is_scalar($value)) {
