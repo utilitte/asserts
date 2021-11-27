@@ -1,0 +1,13 @@
+{
+	"name": "utilitte/asserts",
+	"autoload": {
+		"psr-4": {
+			"Utilitte\\Asserts\\": "src"
+		}
+	},
+	"require": {
+		"php": ">= 8.0",
+		"nette/tester": "^2.4",
+		"nette/utils": "^3.2"
+	}
+}

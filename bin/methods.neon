@@ -1,0 +1,38 @@
+types:
+	int:
+		assertions: '!is_int($value)'
+	float:
+		assertions: '!is_float($value)'
+	array:
+		assertions: '!is_array($value)'
+	object:
+		assertions: '!is_object($value)'
+	string:
+		assertions: '!is_string($value)'
+	null:
+		assertions: '$value !== null'
+
+	numeric:
+		assertions: '!is_float($value) && !is_int($value)'
+		returns: [float, int]
+		prolog: """
+		if (is_string($value) && is_numeric($value)) {
+			$value = str_contains($value, '.') ? (float) $value : (int) $value;
+		}
+		"""
+	numericFloat:
+		assertions: '!is_float($value)'
+		returns: float
+		prolog: """
+		if (is_string($value) && is_numeric($value)) {
+			$value = (float) preg_replace('#\\.0*$#D', '', $value);
+		}
+		"""
+	numericInt:
+		assertions: '!is_int($value)'
+		returns: int
+		prolog: """
+		if (is_string($value) && is_numeric($value) && preg_match('#^[0-9]+$#D', $value)) {
+			$value = (int) preg_replace('#\\.0*$#D', '', $value);
+		}
+		"""
