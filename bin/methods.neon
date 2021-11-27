@@ -9,6 +9,8 @@ types:
 		assertions: '!is_object($value)'
 	string:
 		assertions: '!is_string($value)'
+	bool:
+		assertions: '!is_bool($value)'
 	scalar:
 		returns: [int, float, string, bool]
 		assertions: '!is_scalar($value)'
@@ -53,6 +55,8 @@ generate:
 	- float|null
 	- int|float
 	- int|float|null
+	- bool
+	- bool|null
 	- scalar
 	- scalar|null
 	## special
