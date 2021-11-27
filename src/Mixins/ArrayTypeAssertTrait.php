@@ -30,6 +30,16 @@ trait ArrayTypeAssertTrait
 		return TypeAssert::objectOrNull(self::get($array, $key));
 	}
 
+	public static function arrayOrObject(mixed $array, int|string $key): array|object
+	{
+		return TypeAssert::arrayOrObject(self::get($array, $key));
+	}
+
+	public static function arrayOrObjectOrNull(mixed $array, int|string $key): array|object|null
+	{
+		return TypeAssert::arrayOrObjectOrNull(self::get($array, $key));
+	}
+
 	public static function string(mixed $array, int|string $key): string
 	{
 		return TypeAssert::string(self::get($array, $key));
@@ -88,6 +98,16 @@ trait ArrayTypeAssertTrait
 	public static function callableOrNull(mixed $array, int|string $key): ?callable
 	{
 		return TypeAssert::callableOrNull(self::get($array, $key));
+	}
+
+	public static function iterable(mixed $array, int|string $key): iterable
+	{
+		return TypeAssert::iterable(self::get($array, $key));
+	}
+
+	public static function iterableOrNull(mixed $array, int|string $key): ?iterable
+	{
+		return TypeAssert::iterableOrNull(self::get($array, $key));
 	}
 
 	public static function scalar(mixed $array, int|string $key): int|float|string|bool

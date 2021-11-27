@@ -46,6 +46,24 @@ trait TypeAssertTrait
 		return $value;
 	}
 
+	public static function arrayOrObject(mixed $value): array|object
+	{
+		if (!is_array($value) && !is_object($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'array|object'));
+		}
+
+		return $value;
+	}
+
+	public static function arrayOrObjectOrNull(mixed $value): array|object|null
+	{
+		if (!is_array($value) && !is_object($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'array|object|null'));
+		}
+
+		return $value;
+	}
+
 	public static function string(mixed $value): string
 	{
 		if (!is_string($value)) {
@@ -149,6 +167,24 @@ trait TypeAssertTrait
 	{
 		if (!is_callable($value) && $value !== null) {
 			throw new AssertionFailedException(self::createErrorMessage($value, 'callable|null'));
+		}
+
+		return $value;
+	}
+
+	public static function iterable(mixed $value): iterable
+	{
+		if (!is_iterable($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'iterable'));
+		}
+
+		return $value;
+	}
+
+	public static function iterableOrNull(mixed $value): ?iterable
+	{
+		if (!is_iterable($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'iterable|null'));
 		}
 
 		return $value;

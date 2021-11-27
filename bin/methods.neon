@@ -16,6 +16,8 @@ types:
 		assertions: '!is_scalar($value)'
 	callable:
 		assertions: '!is_callable($value)'
+	iterable:
+		assertions: '!is_iterable($value)'
 	null:
 		assertions: '$value !== null'
 
@@ -50,6 +52,8 @@ generate:
 		- array|null
 		- object
 		- object|null
+		- array|object
+		- array|object|null
 		- string
 		- string|null
 		- int
@@ -62,6 +66,8 @@ generate:
 		- bool|null
 		- callable
 		- callable|null
+		- iterable
+		- iterable|null
 	special:
 		- scalar
 		- scalar|null

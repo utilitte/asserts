@@ -15,7 +15,7 @@ function hasType(array $array, string $type): bool
 	return Arrays::some($array, fn (string $name) => $name === $type);
 }
 
-function type(mixed $value, bool $callable) {
+function type(mixed $value, bool $callable, bool $iterable) {
 	static $converts = [
 		'boolean' => 'bool',
 		'integer' => 'int',
@@ -30,6 +30,10 @@ function type(mixed $value, bool $callable) {
 
 	if ($callable && is_callable($value)) {
 		return 'callable';
+	}
+
+	if ($iterable && is_iterable($value)) {
+		return 'iterable';
 	}
 
 	return $converts[gettype($value)];
@@ -50,7 +54,7 @@ function testVariants(callable $callback, string $type) {
 	$type = Type::fromString($type);
 
 	foreach ($values as $value) {
-		$valueType = type($value, hasType($type->getNames(), 'callable'));
+		$valueType = type($value, hasType($type->getNames(), 'callable'), hasType($type->getNames(), 'iterable'));
 		if (!$type->allows($valueType)) {
 			Assert::exception(fn () => $callback($value), AssertionFailedException::class);
 		} else {
