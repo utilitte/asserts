@@ -118,6 +118,24 @@ trait TypeAssertTrait
 		return $value;
 	}
 
+	public static function scalar(mixed $value): int|float|string|bool
+	{
+		if (!is_scalar($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'scalar'));
+		}
+
+		return $value;
+	}
+
+	public static function scalarOrNull(mixed $value): int|float|string|bool|null
+	{
+		if (!is_scalar($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'scalar|null'));
+		}
+
+		return $value;
+	}
+
 	public static function numeric(mixed $value): float|int
 	{
 		if (is_string($value) && is_numeric($value)) {

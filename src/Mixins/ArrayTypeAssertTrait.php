@@ -70,6 +70,16 @@ trait ArrayTypeAssertTrait
 		return TypeAssert::intOrFloatOrNull(self::get($array, $key));
 	}
 
+	public static function scalar(mixed $array, int|string $key): int|float|string|bool
+	{
+		return TypeAssert::scalar(self::get($array, $key));
+	}
+
+	public static function scalarOrNull(mixed $array, int|string $key): int|float|string|bool|null
+	{
+		return TypeAssert::scalarOrNull(self::get($array, $key));
+	}
+
 	public static function numeric(mixed $array, int|string $key): float|int
 	{
 		return TypeAssert::numeric(self::get($array, $key));
