@@ -235,7 +235,10 @@ $data = (new Processor())->process(Expect::structure([
 		'prolog' => Expect::string()->default(null),
 		'epilog' => Expect::string()->default(null),
 	])),
-	'generate' => Expect::arrayOf(Expect::string()),
+	'generate' => Expect::structure([
+		'builtIn' => Expect::arrayOf(Expect::string()),
+		'special' => Expect::arrayOf(Expect::string()),
+	]),
 ]), Neon::decode(FileSystem::read(__DIR__ . '/methods.neon')));
 
 $generator = new TypeAssertionGenerator(
@@ -246,5 +249,6 @@ $generator = new TypeAssertionGenerator(
 	$data->types,
 );
 
-FileSystem::write(__DIR__ . '/../src/Mixins/TypeAssertTrait.php', $generator->run($data->generate));
-FileSystem::write(__DIR__ . '/../src/Mixins/ArrayTypeAssertTrait.php', $generator->runArray($data->generate));
+$generate = array_merge($data->generate->builtIn, $data->generate->special);
+FileSystem::write(__DIR__ . '/../src/Mixins/TypeAssertTrait.php', $generator->run($generate));
+FileSystem::write(__DIR__ . '/../src/Mixins/ArrayTypeAssertTrait.php', $generator->runArray($generate));

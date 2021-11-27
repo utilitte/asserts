@@ -14,6 +14,8 @@ types:
 	scalar:
 		returns: [int, float, string, bool]
 		assertions: '!is_scalar($value)'
+	callable:
+		assertions: '!is_callable($value)'
 	null:
 		assertions: '$value !== null'
 
@@ -43,25 +45,28 @@ types:
 		"""
 
 generate:
-	- array
-	- array|null
-	- object
-	- object|null
-	- string
-	- string|null
-	- int
-	- int|null
-	- float
-	- float|null
-	- int|float
-	- int|float|null
-	- bool
-	- bool|null
-	- scalar
-	- scalar|null
-	## special
-	- numeric
-	- numericInt
-	- numericInt|null
-	- numericFloat
-	- numericFloat|null
+	builtIn:
+		- array
+		- array|null
+		- object
+		- object|null
+		- string
+		- string|null
+		- int
+		- int|null
+		- float
+		- float|null
+		- int|float
+		- int|float|null
+		- bool
+		- bool|null
+		- callable
+		- callable|null
+	special:
+		- scalar
+		- scalar|null
+		- numeric
+		- numericInt
+		- numericInt|null
+		- numericFloat
+		- numericFloat|null
