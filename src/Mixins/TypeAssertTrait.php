@@ -3,6 +3,7 @@
 namespace Utilitte\Asserts\Mixins;
 
 use Utilitte\Asserts\Exceptions\AssertionFailedException;
+use Utilitte\Asserts\Helper\TypeHelper;
 
 /**
  * @internal
@@ -208,66 +209,89 @@ trait TypeAssertTrait
 		return $value;
 	}
 
-	public static function numeric(mixed $value): float|int
+	public static function numeric(mixed $value): float|int|string
 	{
-		if (is_string($value) && is_numeric($value)) {
-			$value = str_contains($value, '.') ? (float) $value : (int) $value;
-		}
+		$value = TypeHelper::tryToNumeric($value);
 
-		if (!is_float($value) && !is_int($value)) {
+		if (!is_int($value) && !is_float($value) && !is_numeric($value)) {
 			throw new AssertionFailedException(self::createErrorMessage($value, 'numeric'));
 		}
 
 		return $value;
 	}
 
-	public static function numericInt(mixed $value): int
+	public static function numericOrNull(mixed $value): float|int|string|null
 	{
-		if (is_string($value) && is_numeric($value) && preg_match('#^[0-9]+$#D', $value)) {
-			$value = (int) preg_replace('#\.0*$#D', '', $value);
+		$value = TypeHelper::tryToNumeric($value);
+
+		if (!is_int($value) && !is_float($value) && !is_numeric($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'numeric|null'));
 		}
+
+		return $value;
+	}
+
+	public static function integerish(mixed $value): int
+	{
+		$value = TypeHelper::tryToInt($value);
 
 		if (!is_int($value)) {
-			throw new AssertionFailedException(self::createErrorMessage($value, 'numericInt'));
+			throw new AssertionFailedException(self::createErrorMessage($value, 'integerish'));
 		}
 
 		return $value;
 	}
 
-	public static function numericIntOrNull(mixed $value): ?int
+	public static function integerishOrNull(mixed $value): ?int
 	{
-		if (is_string($value) && is_numeric($value) && preg_match('#^[0-9]+$#D', $value)) {
-			$value = (int) preg_replace('#\.0*$#D', '', $value);
-		}
+		$value = TypeHelper::tryToInt($value);
 
 		if (!is_int($value) && $value !== null) {
-			throw new AssertionFailedException(self::createErrorMessage($value, 'numericInt|null'));
+			throw new AssertionFailedException(self::createErrorMessage($value, 'integerish|null'));
 		}
 
 		return $value;
 	}
 
-	public static function numericFloat(mixed $value): float
+	public static function floatish(mixed $value): float
 	{
-		if (is_string($value) && is_numeric($value)) {
-			$value = (float) preg_replace('#\.0*$#D', '', $value);
-		}
+		$value = TypeHelper::tryToFloat($value);
 
 		if (!is_float($value)) {
-			throw new AssertionFailedException(self::createErrorMessage($value, 'numericFloat'));
+			throw new AssertionFailedException(self::createErrorMessage($value, 'floatish'));
 		}
 
 		return $value;
 	}
 
-	public static function numericFloatOrNull(mixed $value): ?float
+	public static function floatishOrNull(mixed $value): ?float
 	{
-		if (is_string($value) && is_numeric($value)) {
-			$value = (float) preg_replace('#\.0*$#D', '', $value);
-		}
+		$value = TypeHelper::tryToFloat($value);
 
 		if (!is_float($value) && $value !== null) {
-			throw new AssertionFailedException(self::createErrorMessage($value, 'numericFloat|null'));
+			throw new AssertionFailedException(self::createErrorMessage($value, 'floatish|null'));
+		}
+
+		return $value;
+	}
+
+	public static function number(mixed $value): float|int
+	{
+		$value = TypeHelper::tryToNumber($value);
+
+		if (!is_int($value) && !is_float($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'number'));
+		}
+
+		return $value;
+	}
+
+	public static function numberOrNull(mixed $value): float|int|null
+	{
+		$value = TypeHelper::tryToNumber($value);
+
+		if (!is_int($value) && !is_float($value) && $value !== null) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'number|null'));
 		}
 
 		return $value;

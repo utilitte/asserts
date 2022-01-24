@@ -1,49 +1,58 @@
 types:
 	int:
-		assertions: '!is_int($value)'
+		asserts: is_int
+		returns: int
 	float:
-		assertions: '!is_float($value)'
+		asserts: is_float
+		returns: float
 	array:
-		assertions: '!is_array($value)'
+		asserts: is_array
+		returns: array
 	object:
-		assertions: '!is_object($value)'
+		asserts: is_object
+		returns: object
 	string:
-		assertions: '!is_string($value)'
+		asserts: is_string
+		returns: string
 	bool:
-		assertions: '!is_bool($value)'
+		asserts: is_bool
+		returns: bool
 	scalar:
 		returns: [int, float, string, bool]
-		assertions: '!is_scalar($value)'
+		asserts: is_scalar
 	callable:
-		assertions: '!is_callable($value)'
+		returns: callable
+		asserts: is_callable
 	iterable:
-		assertions: '!is_iterable($value)'
+		returns: iterable
+		asserts: is_iterable
 	null:
-		assertions: '$value !== null'
+		returns: null
+		asserts: is_null
 
-	numeric:
-		assertions: '!is_float($value) && !is_int($value)'
-		returns: [float, int]
-		prolog: """
-		if (is_string($value) && is_numeric($value)) {
-			$value = str_contains($value, '.') ? (float) $value : (int) $value;
-		}
-		"""
-	numericFloat:
-		assertions: '!is_float($value)'
+	floatish:
+		asserts: [is_float]
 		returns: float
 		prolog: """
-		if (is_string($value) && is_numeric($value)) {
-			$value = (float) preg_replace('#\\.0*$#D', '', $value);
-		}
+		$value = TypeHelper::tryToFloat($value);
 		"""
-	numericInt:
-		assertions: '!is_int($value)'
+	integerish:
+		asserts: [is_int]
 		returns: int
 		prolog: """
-		if (is_string($value) && is_numeric($value) && preg_match('#^[0-9]+$#D', $value)) {
-			$value = (int) preg_replace('#\\.0*$#D', '', $value);
-		}
+		$value = TypeHelper::tryToInt($value);
+		"""
+	number:
+		asserts: [is_int, is_float]
+		returns: [float, int]
+		prolog: """
+		$value = TypeHelper::tryToNumber($value);
+		"""
+	numeric:
+		asserts: [is_int, is_float, is_numeric]
+		returns: [float, int, string]
+		prolog: """
+		$value = TypeHelper::tryToNumeric($value);
 		"""
 
 generate:
@@ -68,11 +77,15 @@ generate:
 		- callable|null
 		- iterable
 		- iterable|null
+
 	special:
 		- scalar
 		- scalar|null
 		- numeric
-		- numericInt
-		- numericInt|null
-		- numericFloat
-		- numericFloat|null
+		- numeric|null
+		- integerish
+		- integerish|null
+		- floatish
+		- floatish|null
+		- number
+		- number|null

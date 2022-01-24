@@ -11,7 +11,6 @@ trait TypeAssertTrait
 
 	/**
 	 * @template T of object
-	 * @param mixed $value
 	 * @param class-string<T> $type
 	 * @return T
 	 */
@@ -32,7 +31,6 @@ trait TypeAssertTrait
 
 	/**
 	 * @template T of object
-	 * @param mixed $value
 	 * @param class-string<T> $type
 	 * @return T|null
 	 */

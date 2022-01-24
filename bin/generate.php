@@ -1,5 +1,6 @@
 <?php declare(strict_types = 1);
 
+use Generator\TypeStruct;
 use Nette\Neon\Neon;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Helpers;
@@ -12,9 +13,10 @@ use Nette\Utils\FileSystem;
 use Nette\Utils\Strings;
 use Nette\Utils\Type;
 use Utilitte\Asserts\Exceptions\AssertionFailedException;
+use Utilitte\Asserts\Helper\TypeHelper;
 use Utilitte\Asserts\TypeAssert;
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 class DefaultPrinter extends Printer
 {
@@ -64,14 +66,21 @@ class DefaultPrinter extends Printer
 class TypeAssertionGenerator
 {
 
+	/** @var TypeStruct[] */
+	private array $types;
+
 	public function __construct(
 		private string $arrayTypeAssertTraitName,
 		private string $typeAssertTraitName,
 		private string $typeAssertClassName,
 		private string $typeAssertionException,
-		private array $types,
+		array $types,
 	)
 	{
+		$this->types = array_map(
+			fn (stdClass $type) => new TypeStruct($type->prolog, $type->epilog, $type->asserts, $type->returns, $type->arguments),
+			$types
+		);
 	}
 
 	public function runArray(array $types): string
@@ -102,6 +111,7 @@ class TypeAssertionGenerator
 		$file->setStrictTypes();
 		$namespace = $file->addNamespace(Helpers::extractNamespace($this->typeAssertTraitName));
 		$namespace->addUse($this->typeAssertionException);
+		$namespace->addUse(TypeHelper::class);
 		$class = $namespace->addTrait(Helpers::extractShortName($this->typeAssertTraitName));
 		$class->addComment('@internal');
 
@@ -141,27 +151,28 @@ class TypeAssertionGenerator
 
 		$expandedType = $this->typeToStringExpanded($type);
 
-		$assertions = [];
-		$epilogs = [];
-		$prologs = [];
+		$structs = [];
 		foreach ($type->getTypes() as $singleType) {
-			$struct = $this->types[$singleType->getSingleName()];
-			$assertions = array_merge($assertions, $struct->assertions);
-			if ($struct->prolog) {
-				$prologs[] = $struct->prolog;
+			$structs[] = $this->types[$singleType->getSingleName()];
+		}
+		$struct = TypeStruct::combine(...$structs);
+
+		foreach (TypeStruct::combine(...$structs)->arguments as $argument) {
+			if ($argument->default !== PHP_INT_MAX - 42) {
+				$parameter = $method->addParameter($argument->name, $argument->default);
+			} else {
+				$parameter = $method->addParameter($argument->name);
 			}
-			if ($struct->epilog) {
-				$epilogs[] = $struct->epilogs;
-			}
+			$parameter->setType($argument->type);
 		}
 
-		if ($prologs) {
-			$method->addBody(implode("\n", $prologs));
+		if ($struct->prolog) {
+			$method->addBody($struct->prolog);
 			$method->addBody('');
 		}
 
 		$method->addBody(
-			sprintf('if (%s) {', $this->generateCondition($assertions))
+			sprintf('if (%s) {', $struct->getAssertion())
 		);
 		$method->addBody(
 			sprintf(
@@ -172,10 +183,10 @@ class TypeAssertionGenerator
 		);
 		$method->addBody('}');
 
-		if ($epilogs) {
-			$method->addBody('');
-			$method->addBody(implode("\n", $epilogs));
-		}
+//		if ($epilogs) {
+//			$method->addBody('');
+//			$method->addBody(implode("\n", $epilogs));
+//		}
 
 		$method->addBody('');
 		$method->addBody('return $value;');
@@ -230,10 +241,15 @@ class TypeAssertionGenerator
 
 $data = (new Processor())->process(Expect::structure([
 	'types' => Expect::arrayOf(Expect::structure([
-		'assertions' => Expect::anyOf(Expect::string(), Expect::arrayOf('string'))->castTo('array')->default([]),
-		'returns' => Expect::anyOf(Expect::string(), Expect::arrayOf('string'))->castTo('array')->default([]),
+		'asserts' => Expect::anyOf(Expect::string(), Expect::arrayOf('string'))->castTo('array')->required(),
+		'returns' => Expect::anyOf(Expect::string(), Expect::arrayOf('string'))->castTo('array')->required(),
 		'prolog' => Expect::string()->default(null),
 		'epilog' => Expect::string()->default(null),
+		'arguments' => Expect::listOf(Expect::structure([
+			'name' => Expect::string()->required(),
+			'type' => Expect::string()->required(),
+			'default' => Expect::mixed(PHP_INT_MAX - 42),
+		])),
 	])),
 	'generate' => Expect::structure([
 		'builtIn' => Expect::arrayOf(Expect::string()),

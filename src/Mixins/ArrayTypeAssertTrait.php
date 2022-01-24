@@ -120,29 +120,44 @@ trait ArrayTypeAssertTrait
 		return TypeAssert::scalarOrNull(self::get($array, $key));
 	}
 
-	public static function numeric(mixed $array, int|string $key): float|int
+	public static function numeric(mixed $array, int|string $key): float|int|string
 	{
 		return TypeAssert::numeric(self::get($array, $key));
 	}
 
-	public static function numericInt(mixed $array, int|string $key): int
+	public static function numericOrNull(mixed $array, int|string $key): float|int|string|null
 	{
-		return TypeAssert::numericInt(self::get($array, $key));
+		return TypeAssert::numericOrNull(self::get($array, $key));
 	}
 
-	public static function numericIntOrNull(mixed $array, int|string $key): ?int
+	public static function integerish(mixed $array, int|string $key): int
 	{
-		return TypeAssert::numericIntOrNull(self::get($array, $key));
+		return TypeAssert::integerish(self::get($array, $key));
 	}
 
-	public static function numericFloat(mixed $array, int|string $key): float
+	public static function integerishOrNull(mixed $array, int|string $key): ?int
 	{
-		return TypeAssert::numericFloat(self::get($array, $key));
+		return TypeAssert::integerishOrNull(self::get($array, $key));
 	}
 
-	public static function numericFloatOrNull(mixed $array, int|string $key): ?float
+	public static function floatish(mixed $array, int|string $key): float
 	{
-		return TypeAssert::numericFloatOrNull(self::get($array, $key));
+		return TypeAssert::floatish(self::get($array, $key));
+	}
+
+	public static function floatishOrNull(mixed $array, int|string $key): ?float
+	{
+		return TypeAssert::floatishOrNull(self::get($array, $key));
+	}
+
+	public static function number(mixed $array, int|string $key): float|int
+	{
+		return TypeAssert::number(self::get($array, $key));
+	}
+
+	public static function numberOrNull(mixed $array, int|string $key): float|int|null
+	{
+		return TypeAssert::numberOrNull(self::get($array, $key));
 	}
 
 }
