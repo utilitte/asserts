@@ -12,6 +12,58 @@ trait TypeAssertTrait
 	/**
 	 * @template T of object
 	 * @param class-string<T> $type
+	 * @return class-string<T>
+	 */
+	public static function classStringOf(mixed $value, string $type): string
+	{
+		if (!is_string($value) || !class_exists($value) || !is_a($value, $type, true)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, sprintf('class-string<%s>', $type)));
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $type
+	 * @return class-string<T>|null
+	 */
+	public static function classStringOfOrNull(mixed $value, string $type): ?string
+	{
+		if ($value !== null && (!is_string($value) || !class_exists($value) || !is_a($value, $type, true))) {
+			throw new AssertionFailedException(self::createErrorMessage($value, sprintf('class-string<%s>', $type)));
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @return class-string
+	 */
+	public static function classString(mixed $value): string
+	{
+		if (!is_string($value) || !class_exists($value)) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'class-string'));
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @return class-string|null
+	 */
+	public static function classStringOrNull(mixed $value): ?string
+	{
+		if ($value !== null && (!is_string($value) || !class_exists($value))) {
+			throw new AssertionFailedException(self::createErrorMessage($value, 'class-string|null'));
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @template T of object
+	 * @param class-string<T> $type
 	 * @return T
 	 */
 	public static function instance(mixed $value, string $type): object
