@@ -12,12 +12,12 @@
 	},
 	"require": {
 		"php": ">= 8.0",
-		"nette/tester": "^2.4",
 		"nette/utils": "^3.2"
 	},
 	"require-dev": {
 		"nette/neon": "^3.3",
 		"nette/schema": "^1.2",
+		"nette/tester": "^2.4",
 		"nette/php-generator": "^3.6"
 	}
 }
